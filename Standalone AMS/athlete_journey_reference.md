@@ -208,6 +208,7 @@ Newest first. Format: date, who, topic, what was said, effect on this doc. SME e
 | 2026-11-24 | Rosters created by Admin only; Team Manager manages members; coaches attach to sessions, not athletes | Profiles 2.3, 2.4, 2.8 |
 | 2026-11-24 | Selection/trials intake stays outside AMS in v1 (proposed, to re-confirm) | Stage 1 |
 | 2026-11-25 | Wanted real HPC lifecycle benchmarked against research; asked for this reference doc | Doc created |
+| 2026-11-25 | Daily Hooper check belongs to the athlete (not a Roster), filled by the athlete every morning with auto-notification; Rosters only group the heatmap; every athlete can fill it. Supersedes coach-entered wellness for the Hooper check | Sections 1 stage 6, 2.1, 2.7; JR-8; spec `wellness_and_rpe.md` v0.2; reopens DPDP check for minors |
 
 ### SME and PM feedback entries
 *(none yet. Add the first entry below this line. Template:)*
