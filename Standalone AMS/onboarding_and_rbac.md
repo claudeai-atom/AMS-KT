@@ -75,7 +75,7 @@ Principle: each role sees only what its job needs; permissions are fixed per rol
 | Data | Admin | Coach | Medic/Physio | Psychologist | Biomechanist | Team Mgr | Athlete | Guardian |
 |---|---|---|---|---|---|---|---|---|
 | Athlete profile | Full | Assigned athletes | Org/centre athletes | Org/centre athletes | Org/centre athletes | Assigned | Own | Child |
-| Training programs/attendance | Full | Own programs | Read | Read | Read | Logistics | Own | Child (read) |
+| Training programs/attendance | Full | Create/manage **own programs** + mark own sessions; org-wide attendance **read** | Read | Read | Read | Logistics | Own | Child (read) |
 | Medical/injury | Availability status only **[PROPOSED]** | Fit/Restricted/Unfit only | Full | None | None | None | Own | Child |
 | Psych notes | None **[PROPOSED]** | None | None | Full | None | None | Own summary only | Per policy |
 | Biomechanics | Read | Summary | Read | None | Full | None | Own | Child |
