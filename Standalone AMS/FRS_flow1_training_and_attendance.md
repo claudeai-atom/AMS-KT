@@ -3,7 +3,8 @@
 
 | | |
 |---|---|
-| Version | 1.0 draft |
+| Version | 1.1 draft |
+| Changes in 1.1 | Accepted: substitute supervisors (FR-ATT-18 to 20), athletes added after start (FR-ATT-21, 22), Added in error (FR-ATT-23, 24), Late / Left early (FR-ATT-25), Admin unmarked list (FR-ATT-26, 27) |
 | Date | 2026-11-26 |
 | Audience | Development, QA, Design |
 | Status | **Draft.** Core decisions are locked. Items tagged **[D#]** are proposed defaults awaiting product confirmation (section 18). |
@@ -110,7 +111,7 @@ stateDiagram-v2
 | Ongoing programme | No | No | Dates within FR-PRG-09; participants; collaborators |
 | Completed or Cancelled programme | No | No | None |
 | Upcoming session | Yes, permanent **[D2]** | Yes | All fields, within FR-PVT-04 |
-| Ongoing or Completed session | No | No | Attendance, notes, conduct outcome |
+| Ongoing or Completed session | No | No | Attendance, notes, conduct outcome, added supervisors (FR-ATT-18), athlete additions and corrections (FR-ATT-21, 23) |
 | Cancelled session | No | No | None |
 
 A completed programme does not lock attendance, notes or conduct outcome on its sessions.
@@ -247,12 +248,12 @@ Training · Strength & Conditioning · Recovery · Competition/Match · Assessme
 | FR-PVT-05 | Full details are visible only to the session's supervisors and its athletes. Athletes shall not see other athletes in the session. **[D14]** |
 | FR-PVT-06 | Everyone else, **including Admin, coaches, the programme owner and collaborators**, shall see only "Unavailable", the athlete and the time. No title, type, programme, venue, supervisor, objectives, notes or attendance. |
 | FR-PVT-07 | Clash messages shall say only "Athlete is unavailable", "Venue is booked" or "Supervisor is unavailable". |
-| FR-PVT-08 | Only the private session's supervisors may edit, cancel, delete, mark attendance, add notes or set Not Conducted. This overrides section 13. |
+| FR-PVT-08 | Only the private session's supervisors may edit, cancel, delete, mark attendance, add or exclude athletes, add notes or set Not Conducted. This overrides section 13. The one exception is assigning a substitute (FR-PVT-13). |
 | FR-PVT-09 | **Enforcement shall be server-side** for every screen, API response, search, filter, count, export, report, notification, reminder, error message and audit view. Restricted data shall not be sent to the client. |
 | FR-PVT-10 | Private sessions shall be excluded from attendance percentages, hours, summaries and reports. Athletes and supervisors see their private records separately. |
 | FR-PVT-11 | Recording or approving leave shall not reveal affected private sessions to the person recording it. Their supervisors see the leave. |
 | FR-PVT-12 | A programme owned in the Psychologist role shall be visible only to its owner, collaborators and athletes. **[D15]** Collaborators still see only "Unavailable" for private sessions they do not supervise. |
-| FR-PVT-13 | If a private session has no active eligible supervisor, Admin may assign one without seeing its content. **[D16]** |
+| FR-PVT-13 | An existing supervisor or Admin may assign an eligible substitute (FR-PVT-03) to a private session at any time before it is Cancelled, including when a supervisor is absent without warning. A reason is required and the action is audited. Admin shall not see content, and gains no right to view or mark. Admin shall not assign themselves **[D28]**. All existing supervisors are notified. The substitute gains access to that session only. |
 | FR-PVT-14 | Notifications shown outside the signed-in app shall not reveal type or title. |
 
 ---
@@ -272,7 +273,7 @@ Training · Strength & Conditioning · Recovery · Competition/Match · Assessme
 | ID | Requirement |
 |---|---|
 | FR-ATT-01 | One record shall exist per session and athlete, even if the athlete is on two included rosters. |
-| FR-ATT-02 | The session's athlete list shall be frozen at start. Later roster or participant changes shall not alter it. A reconstructed session freezes the list chosen at creation. |
+| FR-ATT-02 | The session's athlete list shall be frozen at start. Later roster or participant changes shall not alter it. A reconstructed session freezes the list chosen at creation. The only exceptions are FR-ATT-21 and FR-ATT-23. |
 | FR-ATT-03 | Marking shall be allowed only when the session is Ongoing or Completed, enforced server-side. |
 | FR-ATT-04 | Assigned supervisors of any staff role may mark. Admin may mark any non-private session. Others may only view. |
 | FR-ATT-05 | Records shall default to Not Marked, except where leave applies. |
@@ -288,6 +289,38 @@ Training · Strength & Conditioning · Recovery · Competition/Match · Assessme
 | FR-ATT-15 | Marking shall be a lightweight phone screen usable on a poor connection. A failed save shall be shown clearly and never appear saved. |
 | FR-ATT-16 | The status list and pre-marking logic shall be extendable so Flow 2 can add availability without migrating records. |
 | FR-ATT-17 | Fields for RPE, load, entered by and source shall be reserved. No capture screen is built. |
+
+### 10.2 Substitute supervisors
+**User story:** As the person responsible for a session, I want to add a substitute when a supervisor does not show up, so that attendance can still be taken.
+
+| ID | Requirement |
+|---|---|
+| FR-ATT-18 | For a non-private session that is Ongoing or Completed, its creator (while owner, collaborator or Admin), the programme owner or Admin shall be able to add any staff member as a substitute supervisor. A reason is required. For private sessions, FR-PVT-13 applies. |
+| FR-ATT-19 | Earlier supervisor assignments shall be kept. The substitute is labelled "Substitute", is notified, and gets supervisor rights for that session only. |
+| FR-ATT-20 | The supervisor double-booking block (section 7) shall apply to substitutes. |
+
+### 10.3 Athlete list corrections
+**User story:** As a supervisor, I want to correct who was on the list, so that attendance matches what happened.
+
+| ID | Requirement |
+|---|---|
+| FR-ATT-21 | While Ongoing or Completed, a supervisor (or Admin, non-private only) shall be able to add an active athlete of the organisation to this session only, with a reason. The entry is labelled **Added after start** and starts as Not Marked, or Leave if leave applies. |
+| FR-ATT-22 | Such an addition shall not change the programme, roster or pattern. It follows FR-ATT-01 (one record per athlete) and shows the athlete clash warning. The athlete is notified and can see the session. |
+| FR-ATT-23 | A supervisor (or Admin, non-private only) shall be able to mark an athlete's entry **Added in error**, with a reason. It is a flag on the entry, not an attendance status. The entry and its history are kept and visible to those who can manage the session. It can be reversed with a reason. |
+| FR-ATT-24 | A flagged entry shall be excluded from percentages, status counts, hours, reports, reminders, unmarked counts, "Mark all Present" and leave pre-marking. It is removed from the athlete's view, including private-session access. **[D29]** Flagged entries do not count as attendance records for FR-PRG-09. |
+
+### 10.4 Late and left early
+| ID | Requirement |
+|---|---|
+| FR-ATT-25 | A Present record may carry optional **Late** and **Left early** labels (either or both) with an optional note. They need no reason and do not change percentages or hours; partial attendance is not calculated. Changing the status away from Present removes the labels, with the change kept in history. |
+
+### 10.5 Unmarked follow-up
+**User story:** As an Admin, I want to see unmarked completed sessions, so that attendance does not stay missing.
+
+| ID | Requirement |
+|---|---|
+| FR-ATT-26 | Admin shall have a list of Completed, Conducted, non-private sessions with Not Marked records, showing date, programme, supervisors and unmarked count, filterable by supervisor. Sessions leave the list once nothing is unmarked. |
+| FR-ATT-27 | A **Remind** action shall notify that session's supervisors and show when the last reminder was sent. Private sessions shall never appear in the list or its counts; their supervisors receive the automatic reminders (FR-ATT-13). |
 
 ---
 
@@ -324,7 +357,8 @@ Training · Strength & Conditioning · Recovery · Competition/Match · Assessme
 | Supervisor added or removed | That staff member |
 | Added or removed as collaborator | That staff member |
 | Athlete added to or removed from an Upcoming session | That athlete |
-| Unmarked attendance | Supervisors |
+| Unmarked attendance (automatic or Admin **Remind**) | Supervisors |
+| Substitute assigned to a private session | Substitute and existing supervisors |
 
 | ID | Requirement |
 |---|---|
@@ -368,6 +402,10 @@ Columns describe a person's relationship to a record; a person gets every right 
 
 | Role-based action | Who |
 |---|---|
+| Add substitute after start, non-private | Session creator (FR-ATT-18), programme owner, Admin |
+| Assign substitute, private | Existing supervisor, Admin (not themselves) |
+| Add athlete after start; mark Added in error | Supervisors; Admin for non-private |
+| View unmarked list and send reminders | Admin |
 | Create Psychology session | Psychologist |
 | Create, edit, delete rosters | Admin |
 | Manage roster members | Admin, that roster's Team Manager |
@@ -386,7 +424,9 @@ Columns describe a person's relationship to a record; a person gets every right 
 | Collaborator | programme, person, role, added by, added/removed time |
 | Pattern | programme, label, weekdays, times, venue, type, athletes, supervisors, range, skip-dates, status, creator and role, private |
 | Session | programme, pattern (nullable), date, start, end, venue, type, athletes, supervisors and roles, objectives, notes, status, outcome and reason, private, shared venue, detached, reconstructed and reason, creator and role |
-| Attendance | session, athlete, status, reason, marker and role, timestamps, RPE, load, entered by, source |
+| Attendance | session, athlete, status, reason, marker and role, timestamps, late, left early, note, added after start and reason, added in error and reason, RPE, load, entered by, source |
+| Supervisor assignment | session, person, role, substitute flag, reason, assigned by, time |
+| Reminder | session, sent by, recipients, time |
 | Attendance history | record, actor, role, time, old, new, reason |
 | Leave | athlete, from, to, reason, recorder, approved, approver, timestamps |
 | Organisation holiday | date, name |
@@ -437,6 +477,14 @@ Columns describe a person's relationship to a record; a person gets every right 
 | AT-24 | Athlete requests another athlete's record | Denied | FR-ATH-03 |
 | AT-25 | Athlete deactivated | History and name kept; removed from Upcoming | FR-PAR-06 |
 | AT-26 | Backdated session 31 days old | Rejected | FR-SES-08 |
+| AT-27 | Programme owner adds a substitute to an Ongoing non-private session | Substitute can mark; earlier assignment kept; reason audited | FR-ATT-18, 19 |
+| AT-28 | Substitute is already supervising at that time | Blocked | FR-ATT-20 |
+| AT-29 | Admin assigns a substitute to a private session | Saved; Admin sees no content and cannot mark; supervisors notified | FR-PVT-13 |
+| AT-30 | Admin assigns themselves, or an ineligible role, to a private session | Rejected | FR-PVT-03, 13 |
+| AT-31 | Supervisor adds an unlisted athlete after start | One record, labelled Added after start; programme and roster unchanged | FR-ATT-21, 22 |
+| AT-32 | Entry marked Added in error | Gone from reports, counts and athlete view; history kept; reversible | FR-ATT-23, 24 |
+| AT-33 | Present athlete labelled Late, then changed to Absent | Percentages unaffected by label; label removed on change; history kept | FR-ATT-25 |
+| AT-34 | Admin opens unmarked list when a private session is unmarked | Private session absent from list and counts; its supervisors are reminded | FR-ATT-26, 27 |
 
 ---
 
@@ -450,6 +498,7 @@ Columns describe a person's relationship to a record; a person gets every right 
 | Privacy effort | Server-side masking affects many features | Design one shared access rule; estimate explicitly |
 | Temporary status | In-Recovery for injured athletes mixes meanings in reports | Review when Flow 2 is built |
 | Open marking | Records can change at any time | Audit history is the only control |
+| List corrections | "Added in error" could be used to remove absences and raise percentages; adding a substitute or athlete to a private session widens access | Reason and audit required; review usage after launch |
 | Scheduling load | All staff can schedule athletes; athlete clashes only warn | Monitor overlap frequency after launch |
 
 ---
@@ -474,7 +523,7 @@ These are included above so the design is complete. Confirm or change before dev
 | D13 | Private-session supervisors are limited by role |
 | D14 | Athletes in a private group session do not see each other |
 | D15 | Psychologist-owned programmes are hidden from unrelated users |
-| D16 | Admin can reassign a private session without seeing it |
+| D16 | *Accepted with the substitute rule (FR-PVT-13); no confirmation needed* |
 | D17 | Notification events as listed |
 | D18 | Programme date changes cannot leave sessions outside the dates |
 | D19 | Sessions cannot switch between private and non-private |
@@ -486,3 +535,5 @@ These are included above so the design is complete. Confirm or change before dev
 | D25 | Session notes are hidden from athletes |
 | D26 | Hours trained use scheduled duration of Present records |
 | D27 | All staff can view and export non-private reports |
+| D28 | Admin cannot assign themselves as substitute on a private session |
+| D29 | An Added in error entry is hidden from the athlete |
