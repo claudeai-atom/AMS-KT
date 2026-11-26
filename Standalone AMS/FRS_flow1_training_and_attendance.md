@@ -1,9 +1,10 @@
 # Functional Requirements Specification (PRD)
-## Standalone AMS — Flow 1: Training Programmes, Sessions and Attendance
+## Standalone AMS — Flow 1: Training Programmes, Sessions, Attendance, Load and Athletes
 
 | | |
 |---|---|
-| Version | 1.1 draft |
+| Version | 1.2 draft |
+| Changes in 1.2 | Training load added (section 12A). Athletes page added (section 12B). **Rehab sessions are no longer private**; only Psychology is. Staff access to athlete data is open, with the limits in FR-ACC-02 |
 | Changes in 1.1 | Accepted: substitute supervisors (FR-ATT-18 to 20), athletes added after start (FR-ATT-21, 22), Added in error (FR-ATT-23, 24), Late / Left early (FR-ATT-25), Admin unmarked list (FR-ATT-26, 27) |
 | Date | 2026-11-26 |
 | Audience | Development, QA, Design |
@@ -22,17 +23,19 @@ A High Performance Centre develops athletes across several sports. Many staff di
 1. Any staff member can create programmes and sessions.
 2. Staff can tell which sessions they run, created, or are involved in.
 3. Attendance can be marked on a phone, with every change traceable.
-4. Sensitive support is not disclosed to people who should not see it.
+4. Psychology support is not disclosed to people who should not see it.
+5. Staff can record training load and see each athlete's information in one profile.
 
 ### 1.3 In scope
-Programmes, phases, collaborators, one-time and recurring sessions, clash checks, calendar and session views, private sessions, attendance, leave, athlete view, notifications, reporting.
+Programmes, phases, collaborators, one-time and recurring sessions, clash checks, calendar and session views, private sessions, attendance, leave, training load, Athletes page and profile, athlete view, notifications, reporting.
 
 ### 1.4 Out of scope
 | Item | Note |
 |---|---|
 | Injury, medical attention, availability status, return to play | Flow 2, still being verified |
 | Guardian role, views and notifications | Removed from all flows until requested |
-| Training load (RPE) capture | Phase 2; data fields reserved (FR-ATT-17) |
+| Athlete-entered effort ratings; load-based alerts, ratios (ACWR) or injury predictions | Not built |
+| Readiness, Availability and Performance profile tabs | Added when their data features are ready (FR-APG-08) |
 | Offline marking | Phase 3 |
 | Competition results and handling | Competition/Match is a label only |
 | Assessments, wellness, readiness, alerts | Separate modules |
@@ -237,14 +240,14 @@ Training · Strength & Conditioning · Recovery · Competition/Match · Assessme
 
 ## 9. Private sessions
 
-**User story:** As a psychologist or clinician, I want sensitive sessions kept private so that an athlete's support is not disclosed.
+**User story:** As a psychologist, I want Psychology sessions kept private so that an athlete's support is not disclosed.
 
 | ID | Requirement |
 |---|---|
-| FR-PVT-01 | Every Psychology session shall be private. |
-| FR-PVT-02 | A Recovery session created in the Medic or Physio role shall be private. **[D12]** Privacy is set automatically and cannot be switched off. |
-| FR-PVT-03 | Supervisors shall be limited to Psychologists for Psychology, and Medics or Physios for private rehab. **[D13]** |
-| FR-PVT-04 | An existing session or pattern shall not be changed between private and non-private. The user creates a new one instead. **[D19]** |
+| FR-PVT-01 | Every Psychology session shall be private. Privacy is set automatically and cannot be switched off. |
+| FR-PVT-02 | No other session type is private. Rehab (a Recovery session created in the Medic or Physio role), with its attendance and load, is visible to all staff. |
+| FR-PVT-03 | Only Psychologists shall supervise a Psychology session. |
+| FR-PVT-04 | An existing session or pattern shall not be changed to or from Psychology. The user creates a new one instead. **[D19]** |
 | FR-PVT-05 | Full details are visible only to the session's supervisors and its athletes. Athletes shall not see other athletes in the session. **[D14]** |
 | FR-PVT-06 | Everyone else, **including Admin, coaches, the programme owner and collaborators**, shall see only "Unavailable", the athlete and the time. No title, type, programme, venue, supervisor, objectives, notes or attendance. |
 | FR-PVT-07 | Clash messages shall say only "Athlete is unavailable", "Venue is booked" or "Supervisor is unavailable". |
@@ -285,10 +288,10 @@ Training · Strength & Conditioning · Recovery · Competition/Match · Assessme
 | FR-ATT-11 | Supervisors and Admin may add session notes and set Not Conducted with a reason, within FR-PVT-08. Notes are visible to staff, not athletes. **[D25]** |
 | FR-ATT-12 | Not Conducted sessions shall be excluded from all percentages and hours trained. Existing records are kept and flagged. |
 | FR-ATT-13 | Supervisors shall be reminded of Not Marked records 30 minutes after the session ends and again the next morning. **[D10]** |
-| FR-ATT-14 | There is no "Medically Unavailable" status. Until Flow 2, In-Recovery shall be used with a non-clinical reason, and the screen shall tell users not to enter medical details. **[D9]** |
+| FR-ATT-14 | There is no "Medically Unavailable" status. Until Flow 2, In-Recovery shall be used with a non-clinical reason. **[D9]** Reason, objective and note fields on all sessions, including rehab, are visible to all staff, so each shall tell users not to enter medical details. |
 | FR-ATT-15 | Marking shall be a lightweight phone screen usable on a poor connection. A failed save shall be shown clearly and never appear saved. |
 | FR-ATT-16 | The status list and pre-marking logic shall be extendable so Flow 2 can add availability without migrating records. |
-| FR-ATT-17 | Fields for RPE, load, entered by and source shall be reserved. No capture screen is built. |
+| FR-ATT-17 | Effort and load are recorded as defined in section 12A. They never change attendance status or percentages. |
 
 ### 10.2 Substitute supervisors
 **User story:** As the person responsible for a session, I want to add a substitute when a supervisor does not show up, so that attendance can still be taken.
@@ -377,12 +380,89 @@ Training · Strength & Conditioning · Recovery · Competition/Match · Assessme
 | ID | Requirement |
 |---|---|
 | FR-RPT-01 | Reports shall be available by athlete, roster, programme and phase. |
-| FR-RPT-02 | Show attendance %, engagement %, status counts including Not Marked, sessions by type and hours trained. Hours count Present records on Conducted sessions, using scheduled duration. **[D26]** |
+| FR-RPT-02 | Show attendance %, engagement %, status counts including Not Marked, sessions by type and hours trained. Hours count Present records on Conducted sessions, using scheduled duration. **[D26]** Include total load with coverage (section 12A). |
 | FR-RPT-03 | A zero denominator shall show "—". |
 | FR-RPT-04 | Not Conducted, Cancelled and private sessions shall be excluded from percentages. |
 | FR-RPT-05 | Users shall be able to include or exclude reconstructed sessions. |
 | FR-RPT-06 | All staff may view reports; athletes see only their own figures. CSV export follows the same rules. **[D27]** |
 | FR-PRG-14 | When a programme completes, it shall show a summary by athlete with the FR-RPT-02 measures and Not Conducted count. Later attendance corrections update it. |
+
+---
+
+## 12A. Training load
+
+**User story:** As an assigned coach, I want to record how hard training was so that coaches, athletes and other staff can see how much each athlete has trained.
+
+**Session load = effort rating (1–10) × minutes.** Example: 6 × 90 = 540. It is labelled **Staff-rated load**. It reflects staff judgement, not the athlete's own report, and does not measure distance, speed or weight lifted.
+
+An **assigned coach** is a session supervisor assigned in the Coach or S&C Coach role.
+
+### Which sessions collect load
+| Session type | Collects load |
+|---|---|
+| Training, Strength & Conditioning, Competition/Match | Yes |
+| Assessment/Testing | Yes for physical assessments; the creator can switch it off **[D30]** |
+| Recovery, including rehab | Optional; off unless switched on **[D31]** |
+| Psychology, Meeting/Camp Admin | Never |
+
+| ID | Requirement |
+|---|---|
+| FR-LOAD-01 | Collection shall be set per session by the table above. There is no programme-level load switch. Whoever may enter load for the session, or its creator, may change an optional setting. |
+| FR-LOAD-02 | For sessions other than rehab, only assigned coaches and Admin shall set planned effort or enter and edit actual effort and minutes. Other supervisors cannot. |
+| FR-LOAD-03 | For rehab, only that session's supervisors (the stakeholders involved, for example the Medic or Physio) shall set or enter effort and minutes. |
+| FR-LOAD-04 | Athletes shall never enter or change effort, minutes or load. |
+| FR-LOAD-05 | Planned effort is optional. Planned load = planned effort × scheduled minutes. It may be set or changed until the session starts. **[D32]** |
+| FR-LOAD-06 | Actual effort may be entered when the session is Completed and Conducted, only for Present athletes. There is no closing deadline. |
+| FR-LOAD-07 | The user shall be able to apply one effort value to all eligible athletes and then change individuals. Applying it shall not overwrite existing values without confirmation. Group-applied values are flagged. |
+| FR-LOAD-08 | Minutes default to scheduled duration and may be changed per athlete, to no less than 1 and no more than that duration. **[D33]** |
+| FR-LOAD-09 | Every entry and change stores actor, active role, time, old and new values. |
+| FR-LOAD-10 | **Missing is not zero.** Totals and trends shall show coverage (for example "5 of 6 sessions rated") and mark incomplete totals. Coverage counts the athlete's Present records in sessions that collect load. |
+| FR-LOAD-11 | Load shall be excluded when the session is Not Conducted, the record is no longer Present, or the entry is Added in error. Values are kept in history. |
+| FR-LOAD-12 | The system shall show session, daily and weekly load, a 28-day trend, load by session type, and planned against actual where both exist. The week starts on Monday by default. **[D34]** |
+| FR-LOAD-13 | All staff may view athlete load. Athletes see only their own, including planned values. **[D35]** |
+| FR-LOAD-14 | The session page shall show rated and missing athletes and planned against actual. Reminders for missing effort go to those allowed to enter it, with the same timing as FR-ATT-13. **[D36]** |
+| FR-LOAD-15 | Load shall not change availability, select or rank athletes, or be described as injury risk or clearance. |
+| FR-LOAD-16 | Screens showing load totals shall state that training outside AMS is not included. Psychology sessions never carry load, so they do not affect totals. |
+
+---
+
+## 12B. Athletes page and profile
+
+**User story:** As Admin or staff, I want to see every athlete and open one profile so that their information is in one place.
+
+### Access rule
+| ID | Requirement |
+|---|---|
+| FR-ACC-01 | All staff roles, including Team Manager, Biomechanist and Performance Analyst, shall see all athlete data in the organisation, except as FR-ACC-02 states. Viewing grants no right to edit. |
+| FR-ACC-02 | Restricted: (a) Psychology tests and assessments; (b) Psychology sessions, notes and attendance (section 9); (c) medical diagnosis, clinical and treatment notes and medical files, limited to the Medic and care team under Flow 2 rules. |
+| FR-ACC-03 | When their features exist, availability, permitted activity, return stage, readiness, individual wellness answers and performance results shall be visible to all staff. |
+| FR-ACC-04 | Psychology tests and assessments, when built, shall be visible to Psychologists only; athlete access to their own results is to be decided with that module. **[D37]** |
+| FR-ACC-05 | Athletes cannot open the Athletes page or another athlete's profile. |
+
+### Athletes page
+| ID | Requirement |
+|---|---|
+| FR-APG-01 | List all athletes in the organisation. |
+| FR-APG-02 | Search by name; filter by sport, gender and roster. An availability filter is added with Availability. |
+| FR-APG-03 | Columns: name, sport, gender, rosters, Attendance %, current-week load with coverage. |
+| FR-APG-04 | Default order is by name. The page shall not present a ranking. |
+| FR-APG-05 | Selecting an athlete opens their profile. Deactivated athletes are hidden by default and available through a filter. **[D38]** |
+
+### Athlete profile
+| Tab | Content | Release |
+|---|---|---|
+| Overview | Basic profile, rosters, programmes, upcoming sessions, attendance and load summaries | First |
+| Training load | FR-LOAD-12 views with coverage | First |
+| Attendance | Percentages, status counts and session history | First |
+| Readiness | Comparison with the athlete's usual pattern, reasons and wellness answers | When the daily wellness check and readiness rules ship |
+| Availability | Status history without clinical detail | With Flow 2 |
+| Performance | Test results, competition results and assessed progress | When those records are designed |
+
+| ID | Requirement |
+|---|---|
+| FR-APG-06 | The first release shall include the list and the Overview, Training load and Attendance tabs. |
+| FR-APG-07 | Profile figures shall use the same definitions as reports and shall exclude private sessions. Screens shall **always** state "Excludes private sessions", whether or not any exist. |
+| FR-APG-08 | Later tabs shall stay hidden until their data features are ready. No placeholder or invented values. |
 
 ---
 
@@ -402,6 +482,9 @@ Columns describe a person's relationship to a record; a person gets every right 
 
 | Role-based action | Who |
 |---|---|
+| Plan and enter effort, non-rehab | Assigned coaches (Coach, S&C Coach), Admin |
+| Plan and enter effort, rehab | That session's supervisors only |
+| View Athletes page, profiles and load | All staff (limits in FR-ACC-02) |
 | Add substitute after start, non-private | Session creator (FR-ATT-18), programme owner, Admin |
 | Assign substitute, private | Existing supervisor, Admin (not themselves) |
 | Add athlete after start; mark Added in error | Supervisors; Admin for non-private |
@@ -424,7 +507,9 @@ Columns describe a person's relationship to a record; a person gets every right 
 | Collaborator | programme, person, role, added by, added/removed time |
 | Pattern | programme, label, weekdays, times, venue, type, athletes, supervisors, range, skip-dates, status, creator and role, private |
 | Session | programme, pattern (nullable), date, start, end, venue, type, athletes, supervisors and roles, objectives, notes, status, outcome and reason, private, shared venue, detached, reconstructed and reason, creator and role |
-| Attendance | session, athlete, status, reason, marker and role, timestamps, late, left early, note, added after start and reason, added in error and reason, RPE, load, entered by, source |
+| Attendance | session, athlete, status, reason, marker and role, timestamps, late, left early, note, added after start and reason, added in error and reason |
+| Load entry | attendance record, effort, minutes, load, group-applied flag, entered by and role, timestamps, history |
+| Session load settings | session, collects load, planned effort, set by |
 | Supervisor assignment | session, person, role, substitute flag, reason, assigned by, time |
 | Reminder | session, sent by, recipients, time |
 | Attendance history | record, actor, role, time, old, new, reason |
@@ -485,6 +570,17 @@ Columns describe a person's relationship to a record; a person gets every right 
 | AT-32 | Entry marked Added in error | Gone from reports, counts and athlete view; history kept; reversible | FR-ATT-23, 24 |
 | AT-33 | Present athlete labelled Late, then changed to Absent | Percentages unaffected by label; label removed on change; history kept | FR-ATT-25 |
 | AT-34 | Admin opens unmarked list when a private session is unmarked | Private session absent from list and counts; its supervisors are reminded | FR-ATT-26, 27 |
+| AT-35 | Effort 6, 90 minutes | Load 540, labelled Staff-rated | 12A |
+| AT-36 | Athlete, or a non-coach supervisor on a Training session, submits effort by screen or API | Rejected | FR-LOAD-02, 04 |
+| AT-37 | Supervising S&C Coach enters effort | Saved | FR-LOAD-02 |
+| AT-38 | Unassigned coach, or Admin who is not a supervisor, enters rehab effort | Rejected; rehab supervisor succeeds | FR-LOAD-03 |
+| AT-39 | One of six eligible sessions has no effort | "5 of 6 rated", total marked incomplete, no zero added | FR-LOAD-10 |
+| AT-40 | Attendance changes from Present to Absent after effort entry | Load leaves totals; history kept | FR-LOAD-11 |
+| AT-41 | Effort added to a Psychology or Meeting session | Not offered; rejected | 12A |
+| AT-42 | Any staff role opens a rehab session | Session, attendance and load visible | FR-PVT-02 |
+| AT-43 | Team Manager opens an athlete profile | All released tabs visible, read only; no Psychology content | FR-ACC-01, 02 |
+| AT-44 | Profile for an athlete with or without Psychology sessions | Same "Excludes private sessions" note; no private data | FR-APG-07 |
+| AT-45 | Athlete requests the Athletes page | Denied | FR-ACC-05 |
 
 ---
 
@@ -495,6 +591,9 @@ Columns describe a person's relationship to a record; a person gets every right 
 |---|---|---|
 | Minors | With Guardian removed, no parent is told of a missed session | Legal and safeguarding review before use with minors. Onboarding consent is outside this document |
 | Privacy | "Unavailable" still shows something is booked; privacy rules are unverified | Psychologist and legal review before real data |
+| Open staff access | Every staff role can see athlete data, including minors' and, later, wellness answers such as stress. Athletes may answer less honestly | Legal review before real data; tell athletes plainly who can see what |
+| Rehab visibility | All staff can tell an athlete is in rehab, and read its notes and reasons | No-medical-details warning (FR-ATT-14); legal review |
+| Staff-rated load | A coach's rating may differ from what the athlete experienced, and group values hide differences | Label clearly; review how often group values go unchanged |
 | Privacy effort | Server-side masking affects many features | Design one shared access rule; estimate explicitly |
 | Temporary status | In-Recovery for injured athletes mixes meanings in reports | Review when Flow 2 is built |
 | Open marking | Records can change at any time | Audit history is the only control |
@@ -519,8 +618,8 @@ These are included above so the design is complete. Confirm or change before dev
 | D9 | In-Recovery is the temporary status for injured athletes |
 | D10 | Reminders at 30 minutes and next morning |
 | D11 | Late leave needs confirmation before changing marked attendance |
-| D12 | "Clinician-run rehab" means Recovery created in the Medic or Physio role |
-| D13 | Private-session supervisors are limited by role |
+| D12 | "Rehab" means Recovery created in the Medic or Physio role (now decides who enters its load, not privacy) |
+| D13 | *Settled: only Psychologists supervise Psychology; rehab is not private* |
 | D14 | Athletes in a private group session do not see each other |
 | D15 | Psychologist-owned programmes are hidden from unrelated users |
 | D16 | *Accepted with the substitute rule (FR-PVT-13); no confirmation needed* |
@@ -537,3 +636,12 @@ These are included above so the design is complete. Confirm or change before dev
 | D27 | All staff can view and export non-private reports |
 | D28 | Admin cannot assign themselves as substitute on a private session |
 | D29 | An Added in error entry is hidden from the athlete |
+| D30 | Physical assessments collect load unless switched off |
+| D31 | Recovery load is off unless switched on |
+| D32 | Planned effort is locked once the session starts |
+| D33 | Athlete minutes cannot exceed scheduled duration |
+| D34 | Load week starts on Monday |
+| D35 | Athletes see their own load, including planned values |
+| D36 | Missing-effort reminders use attendance reminder timing |
+| D37 | Psychology tests are visible to Psychologists only; athlete access decided later |
+| D38 | Deactivated athletes are hidden by default on the Athletes page |
